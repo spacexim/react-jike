@@ -1,7 +1,7 @@
 // 和用户相关的状态管理
 
 import { createSlice } from "@reduxjs/toolkit";
-import { request } from "@/utils";
+import { removeToken, request } from "@/utils";
 import { setToken as _setToken, getToken } from "@/utils";
 
 const userStore = createSlice({
@@ -9,6 +9,7 @@ const userStore = createSlice({
   // 数据状态
   initialState: {
     token: getToken() || "",
+    userInfo: {},
   },
   // 同步修改方法
   reducers: {
@@ -17,12 +18,21 @@ const userStore = createSlice({
       // localstorage存储token
       _setToken(action.payload);
     },
+    setUserInfo(state, action) {
+      state.userInfo = action.payload;
+    },
+    clearUserInfo(state) {
+      state.token = "";
+      state.userInfo = {};
+      // 清除localstorage中的token
+      removeToken();
+    },
   },
 });
 
 // 解构出actionCreater
 
-const { setToken } = userStore.actions;
+const { setToken, setUserInfo, clearUserInfo } = userStore.actions;
 
 // 获取reducer函数
 
@@ -39,6 +49,16 @@ const fetchLogin = (loginForm) => {
   };
 };
 
-export { fetchLogin, setToken };
+// 异步方法 获取用户信息
+const fetchUserInfo = () => {
+  return async (dispatch) => {
+    // 1. 发送异步请求
+    const res = await request.get("/user/profile");
+    // 2. 提交同步action 存储用户信息
+    dispatch(setUserInfo(res.data));
+  };
+};
+
+export { fetchLogin, fetchUserInfo, clearUserInfo, setToken };
 
 export default userReducer;
