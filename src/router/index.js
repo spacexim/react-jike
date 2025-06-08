@@ -24,8 +24,8 @@ const router = createBrowserRouter([
     ),
     children: [
       {
-        path: "home",
         element: <Home />,
+        index: true, // 设置为默认子路由
       },
       {
         path: "article",

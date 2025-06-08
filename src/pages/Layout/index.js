@@ -34,7 +34,7 @@ const items = [
 const GeekLayout = () => {
   const navigate = useNavigate();
   const onMenuClick = (route) => {
-    console.log("Menu item clicked");
+    console.log("Menu item clicked", route);
     const path = route.key;
     navigate(path);
   };
